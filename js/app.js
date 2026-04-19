@@ -36,6 +36,11 @@ const statusIcon = document.querySelector('.status-icon');
 const btnEncrypt = document.getElementById('btn-encrypt');
 const btnDecrypt = document.getElementById('btn-decrypt');
 const btnCopy = document.getElementById('btn-copy');
+const btnSelectFile = document.getElementById('btn-select-file');
+const btnSelectFolder = document.getElementById('btn-select-folder');
+
+btnSelectFile.addEventListener('click', () => fileInput.click());
+btnSelectFolder.addEventListener('click', () => folderInput.click());
 
 let selectedFiles = [];
 let isFolderMode = false;

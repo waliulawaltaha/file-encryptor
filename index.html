@@ -33,18 +33,18 @@
         <input type="file" id="fileInput" class="hidden-file-input">
         <input type="file" id="folderInput" class="hidden-file-input" webkitdirectory directory multiple>
         
-        <div class="file-drop-zone" id="drop-zone">
-            <span class="material-symbols-outlined upload-icon">upload_file</span>
-            <span id="file-name-display" class="file-name">Select data to encrypt or decrypt</span>
-            
-            <div class="file-actions">
-                <label for="fileInput" class="m3-btn m3-btn-tonal btn-small">
-                    <span class="material-symbols-outlined">draft</span> Choose File
-                </label>
-                <label for="folderInput" class="m3-btn m3-btn-tonal btn-small">
-                    <span class="material-symbols-outlined">folder_zip</span> Choose Folder
-                </label>
-            </div>
+        <div class="file-display-zone" id="drop-zone">
+            <span class="material-symbols-outlined upload-icon">folder_data</span>
+            <span id="file-name-display" class="file-name">No data selected</span>
+        </div>
+
+        <div class="selection-buttons">
+            <button id="btn-select-file" class="m3-btn m3-btn-tonal btn-small">
+                <span class="material-symbols-outlined btn-icon">draft</span> Select File
+            </button>
+            <button id="btn-select-folder" class="m3-btn m3-btn-tonal btn-small">
+                <span class="material-symbols-outlined btn-icon">folder_zip</span> Select Folder
+            </button>
         </div>
     </div>
 
