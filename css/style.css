@@ -240,3 +240,66 @@ h2 { margin: 0 0 0.5rem 0; font-weight: 500; font-size: 1.75rem; }
 .m3-footer p { margin: 0.25rem 0; }
 .m3-footer a { color: var(--md-sys-color-primary); text-decoration: none; font-weight: 500; }
 .m3-footer a:hover { text-decoration: underline; }
+
+/* Disabled Button States */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none; /* Prevents hover effects when disabled */
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spin-animation {
+    animation: spin 1.2s linear infinite;
+}
+
+/* Password Strength Meter */
+.strength-meter-container {
+    height: 4px;
+    background-color: var(--md-sys-color-surface-variant);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-text {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Status Layout Fix for Copy Button */
+.m3-status {
+    display: flex;
+    justify-content: space-between; /* Space out text and copy button */
+    align-items: center;
+}
+
+.status-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.copy-btn {
+    padding: 0.4rem;
+    color: inherit; /* Inherits the color of the success message */
+}
+
+.copy-btn:active {
+    transform: scale(0.9);
+}
