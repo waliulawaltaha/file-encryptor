@@ -1,6 +1,7 @@
-# 🔒 Secure Client-Side Encryptor
+# 🔒 File Encryptor
 
-Secure, zero-knowledge file encryption directly in your browser. Built using the native Web Crypto API, it features military-grade AES-256-GCM encryption and PBKDF2 to protect your files completely offline. No data is ever sent to a server. Includes a sleek Material Design 3 UI with dark mode support. Open-source and privacy-focused.
+File Encryptor is a secure, zero-knowledge application that encrypts your files directly in the browser. Built utilizing the native Web Crypto API, it features military-grade AES-256-GCM encryption and PBKDF2 to protect your files completely offline. No data is ever sent to a backend server. Includes a modern, responsive Material Design 3 interface with dark mode support, and is fully containerized for easy self-hosting in home lab environments.
+
 
 ## ✨ Features
 
@@ -9,6 +10,28 @@ Secure, zero-knowledge file encryption directly in your browser. Built using the
 * **Hardened Key Derivation:** Uses **PBKDF2** with 600,000 iterations to heavily resist brute-force attacks against your password.
 * **Material Design 3 UI:** A premium, responsive interface featuring dynamic color logic, smooth transitions, and a built-in Dark Mode.
 * **No Dependencies:** 100% Vanilla HTML, CSS, and ES6 JavaScript. No external libraries or frameworks to compromise security.
+
+## 🐳 Home Lab & Self-Hosting
+
+Because File Encryptor is a static frontend application, it is incredibly lightweight and perfect for self-hosting. A `docker-compose.yml` is provided for instant deployment.
+
+```bash
+# Clone the repository
+git clone [https://github.com/waliulawaltaha/file-encryptor.git](https://github.com/waliulawaltaha/file-encryptor.git)
+cd file-encryptor
+
+# Start the container
+docker-compose up -d
+```
+The app will be available at http://localhost:8080.
+
+⚠️ Important: The HTTPS Requirement
+Modern browsers have strict security sandboxes. The Web Crypto API (window.crypto.subtle) will only run in a Secure Context.
+
+ * It will work on http://localhost or http://127.0.0.1.
+ * It will not work if you access it via a local network IP (e.g., http://192.168.1.50:8080) without SSL.
+
+To access this tool securely across your home network from other devices, you must route the container through a reverse proxy (like Nginx Proxy Manager, Traefik, or Cloudflare Tunnels) and assign it a local domain with a valid or self-signed SSL certificate (https://).
 
 ## 🛡️ Threat Model & Security Realities
 
