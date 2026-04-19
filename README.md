@@ -1,5 +1,8 @@
 # 🔒 File Encryptor
 
+<img width="1470" height="835" alt="Screenshot 2026-04-19 at 3 23 35 PM" src="https://github.com/user-attachments/assets/444e15c2-fda4-4488-aa56-c60e9a94fa07" />
+
+
 File Encryptor is a secure, zero-knowledge application that encrypts your files directly in the browser. Built utilizing the native Web Crypto API, it features military-grade AES-256-GCM encryption and PBKDF2 to protect your files completely offline. No data is ever sent to a backend server. Includes a modern, responsive Material Design 3 interface with dark mode support, and is fully containerized for easy self-hosting in home lab environments.
 
 
