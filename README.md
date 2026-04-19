@@ -23,3 +23,10 @@ When evaluating security tools, honesty is critical. Here is what this tool can 
 * **Keyloggers/Malware:** If the computer you are using is infected with malware, an attacker can record your keystrokes as you type your password.
 * **Weak Passwords:** AES-256 is unbreakable, but human passwords are not. If you use "password123", your file can be brute-forced. **Always use a high-entropy passphrase.**
 * **Lost Passwords:** There is no "Forgot Password" feature. If you lose your passphrase, your data is mathematically unrecoverable.
+
+## 👨‍💻 Author
+​Waliul Awal Taha
+* Website: www.waliulawaltaha.com
+​
+## 📄 License
+​[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
