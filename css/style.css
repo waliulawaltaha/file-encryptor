@@ -4,17 +4,13 @@
     --md-sys-color-on-primary: #FFFFFF;
     --md-sys-color-primary-container: #EADDFF;
     --md-sys-color-on-primary-container: #21005D;
-    
     --md-sys-color-secondary-container: #E8DEF8;
     --md-sys-color-on-secondary-container: #1D192B;
-    
     --md-sys-color-background: #FEF7FF;
     --md-sys-color-on-background: #1D1B20;
-    
     --md-sys-color-surface: #FEF7FF;
     --md-sys-color-surface-variant: #E7E0EC;
     --md-sys-color-on-surface-variant: #49454F;
-    
     --md-sys-color-outline: #79747E;
     --md-sys-color-outline-variant: #CAC4D0;
 }
@@ -25,17 +21,13 @@
     --md-sys-color-on-primary: #381E72;
     --md-sys-color-primary-container: #4F378B;
     --md-sys-color-on-primary-container: #EADDFF;
-    
     --md-sys-color-secondary-container: #4A4458;
     --md-sys-color-on-secondary-container: #E8DEF8;
-    
     --md-sys-color-background: #141218;
     --md-sys-color-on-background: #E6E0E9;
-    
     --md-sys-color-surface: #1D1B20;
     --md-sys-color-surface-variant: #49454F;
     --md-sys-color-on-surface-variant: #CAC4D0;
-    
     --md-sys-color-outline: #938F99;
     --md-sys-color-outline-variant: #49454F;
 }
@@ -45,301 +37,105 @@ body {
     font-family: 'Roboto', system-ui, sans-serif; 
     background-color: var(--md-sys-color-background);
     color: var(--md-sys-color-on-background);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 1.5rem;
-    box-sizing: border-box;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Icons Baseline Adjustments */
-.material-symbols-outlined {
-    vertical-align: middle;
-}
+.material-symbols-outlined { vertical-align: middle; }
 
-/* M3 Elevated Card */
+/* --- Card & Header --- */
 .m3-card { 
     background-color: var(--md-sys-color-surface); 
-    padding: 1.5rem 2.5rem 2.5rem 2.5rem; 
-    border-radius: 28px; 
+    padding: 1.5rem 2.5rem 2.5rem 2.5rem; border-radius: 28px; 
     box-shadow: 0 4px 18px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-    width: 100%;
-    max-width: 480px;
-    box-sizing: border-box;
+    width: 100%; max-width: 480px; box-sizing: border-box;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
+[data-theme="dark"] .m3-card { box-shadow: 0 4px 18px rgba(0,0,0,0.4); }
 
-[data-theme="dark"] .m3-card {
-    box-shadow: 0 4px 18px rgba(0,0,0,0.4);
-}
-
-.card-top-bar {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 0.5rem;
-}
-
+.card-top-bar { display: flex; justify-content: flex-end; margin-bottom: 0.5rem; }
 .m3-icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    color: var(--md-sys-color-on-surface-variant);
-    transition: background-color 0.2s, color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: transparent; border: none; cursor: pointer; padding: 0.5rem;
+    border-radius: 50%; color: var(--md-sys-color-on-surface-variant);
+    transition: background-color 0.2s, color 0.2s; display: flex; align-items: center; justify-content: center;
 }
+.m3-icon-btn:hover { background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-background); }
 
-.m3-icon-btn:hover {
-    background-color: var(--md-sys-color-surface-variant);
-    color: var(--md-sys-color-on-background);
-}
-
-.m3-card-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
+.m3-card-header { text-align: center; margin-bottom: 2rem; }
 .icon-container {
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-on-primary-container);
-    display: inline-flex;
-    padding: 1rem;
-    border-radius: 24px; /* Squircle shape */
-    margin-bottom: 1rem;
+    background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+    display: inline-flex; padding: 1rem; border-radius: 24px; margin-bottom: 1rem;
 }
-
-.main-icon {
-    font-size: 2rem;
-}
-
+.main-icon { font-size: 2rem; }
 h2 { margin: 0 0 0.5rem 0; font-weight: 500; font-size: 1.75rem; }
-
 .m3-subtitle { color: var(--md-sys-color-on-surface-variant); font-size: 0.875rem; line-height: 1.4; margin: 0; }
 
-/* Custom File Picker */
-.m3-file-area {
-    margin-bottom: 1.5rem;
-}
-
-.hidden-file-input {
-    opacity: 0;
-    width: 0.1px;
-    height: 0.1px;
-    position: absolute;
-    z-index: -1;
-}
-
-/* --- Modern M3 File Area --- */
-.m3-file-area {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.hidden-file-input {
-    display: none;
-}
+/* --- File Area (Fixed UI) --- */
+.m3-file-area { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.hidden-file-input { display: none; }
 
 .file-display-zone {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 2rem 1rem; border-radius: 16px;
     background-color: var(--md-sys-color-surface-variant);
     color: var(--md-sys-color-on-surface-variant);
-    transition: all 0.2s ease;
-    text-align: center;
+    text-align: center; transition: opacity 0.2s;
 }
+.upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--md-sys-color-primary); }
+.file-name { font-size: 0.9rem; font-weight: 500; word-break: break-all; }
 
-.upload-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--md-sys-color-primary);
-}
+.selection-buttons { display: flex; gap: 0.5rem; }
+.btn-small { flex: 1; padding: 0.6rem 1rem; font-size: 0.85rem; }
+.btn-small .material-symbols-outlined { font-size: 1.1rem; margin-right: 4px; }
 
-.file-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    word-break: break-all;
-}
-
-.selection-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.selection-buttons .m3-btn {
-    flex: 1;
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-}
-
-/* Input Fields */
+/* --- Inputs --- */
 .m3-text-field { margin-bottom: 1.5rem; display: flex; flex-direction: column; }
 .m3-text-field label { font-size: 0.875rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 0.5rem; font-weight: 500; }
-
-.input-with-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-icon {
-    position: absolute;
-    left: 1rem;
-    color: var(--md-sys-color-on-surface-variant);
-}
-
+.input-with-icon { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; left: 1rem; color: var(--md-sys-color-on-surface-variant); }
 .m3-text-field input { 
-    width: 100%;
-    padding: 1rem 1rem 1rem 3rem; /* Extra left padding for icon */
-    border: 1px solid var(--md-sys-color-outline); 
-    border-radius: 8px; 
-    background-color: var(--md-sys-color-surface);
-    color: var(--md-sys-color-on-background);
-    font-size: 1rem;
-    font-family: inherit;
-    box-sizing: border-box;
-    transition: border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
+    width: 100%; padding: 1rem 1rem 1rem 3rem; border: 1px solid var(--md-sys-color-outline); 
+    border-radius: 8px; background-color: var(--md-sys-color-surface); color: var(--md-sys-color-on-background);
+    font-size: 1rem; font-family: inherit; box-sizing: border-box; transition: border-color 0.2s, background-color 0.3s, color 0.3s;
 }
+.m3-text-field input:focus { outline: none; border-color: var(--md-sys-color-primary); border-width: 2px; padding: calc(1rem - 1px) calc(1rem - 1px) calc(1rem - 1px) calc(3rem - 1px); }
+.m3-text-field input:focus + .input-icon { color: var(--md-sys-color-primary); }
 
-.m3-text-field input:focus {
-    outline: none;
-    border-color: var(--md-sys-color-primary);
-    border-width: 2px;
-    padding: calc(1rem - 1px) calc(1rem - 1px) calc(1rem - 1px) calc(3rem - 1px);
-}
-.m3-text-field input:focus + .input-icon {
-    color: var(--md-sys-color-primary);
-}
+/* --- Password Strength --- */
+.strength-meter-container { height: 4px; background-color: var(--md-sys-color-surface-variant); border-radius: 2px; margin-top: 8px; overflow: hidden; width: 100%; }
+.strength-bar { height: 100%; width: 0%; transition: width 0.3s ease, background-color 0.3s ease; border-radius: 2px; }
+.strength-text { font-size: 0.75rem; margin-top: 4px; font-weight: 500; transition: color 0.3s ease; }
 
-/* Buttons */
-.button-group { display: flex; gap: 1rem; margin-top: 2rem; }
-
+/* --- Buttons --- */
+.button-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
 .m3-btn { 
     flex: 1; border: none; padding: 0.9rem 1rem; border-radius: 100px; 
     cursor: pointer; font-size: 0.875rem; font-weight: 500; font-family: inherit;
     display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     transition: background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
-
 .btn-icon { font-size: 1.25rem; }
-
 .m3-btn-primary { background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-.m3-btn-primary:hover { box-shadow: 0 2px 6px rgba(0,0,0, 0.2); opacity: 0.9; }
-
+.m3-btn-primary:hover:not(:disabled) { box-shadow: 0 2px 6px rgba(0,0,0, 0.2); opacity: 0.9; }
 .m3-btn-tonal { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
-.m3-btn-tonal:hover { opacity: 0.85; }
+.m3-btn-tonal:hover:not(:disabled) { opacity: 0.85; }
+button:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
-/* Status */
+/* --- Status & Footer --- */
 .m3-status { 
     margin-top: 1.5rem; font-weight: 500; font-size: 0.875rem; 
-    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    min-height: 1.5rem; padding: 0.75rem; border-radius: 8px;
-    background: transparent; transition: background-color 0.2s;
+    display: flex; justify-content: space-between; align-items: center;
+    min-height: 1.5rem; padding: 0.75rem; border-radius: 8px; transition: background-color 0.2s;
 }
-
+.status-content { display: flex; align-items: center; gap: 0.5rem; }
 .status-icon { font-size: 1.25rem; }
+.copy-btn { padding: 0.4rem; color: inherit; }
+.copy-btn:active { transform: scale(0.9); }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.spin-animation { animation: spin 1.2s linear infinite; }
 
-/* Footer */
 .m3-footer { margin-top: 3rem; text-align: center; color: var(--md-sys-color-on-surface-variant); font-size: 0.875rem; }
 .m3-footer p { margin: 0.25rem 0; }
 .m3-footer a { color: var(--md-sys-color-primary); text-decoration: none; font-weight: 500; }
 .m3-footer a:hover { text-decoration: underline; }
-
-/* Disabled Button States */
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none; /* Prevents hover effects when disabled */
-}
-
-/* Spinner Animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.spin-animation {
-    animation: spin 1.2s linear infinite;
-}
-
-/* Password Strength Meter */
-.strength-meter-container {
-    height: 4px;
-    background-color: var(--md-sys-color-surface-variant);
-    border-radius: 2px;
-    margin-top: 8px;
-    overflow: hidden;
-    width: 100%;
-}
-
-.strength-bar {
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s ease, background-color 0.3s ease;
-    border-radius: 2px;
-}
-
-.strength-text {
-    font-size: 0.75rem;
-    margin-top: 4px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-/* Status Layout Fix for Copy Button */
-.m3-status {
-    display: flex;
-    justify-content: space-between; /* Space out text and copy button */
-    align-items: center;
-}
-
-.status-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.copy-btn {
-    padding: 0.4rem;
-    color: inherit; /* Inherits the color of the success message */
-}
-
-.copy-btn:active {
-    transform: scale(0.9);
-}
-
-
-.file-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    position: relative;
-    z-index: 5;
-}
-
-.btn-small {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-}
-
-.btn-small .material-symbols-outlined {
-    font-size: 1.1rem;
-}
-
-/* Ensure the drop zone label itself doesn't trigger the file input anymore, 
-   since we have dedicated buttons inside it now. */
-.file-drop-zone {
-    cursor: default;
-}
