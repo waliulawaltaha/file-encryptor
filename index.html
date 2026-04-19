@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Client-Side Encryptor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main class="m3-card">
+    <div class="card-top-bar">
+        <button id="theme-toggle" class="m3-icon-btn" aria-label="Toggle Dark Mode">
+            <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+        </button>
+    </div>
+
+    <div class="m3-card-header">
+        <div class="icon-container">
+            <span class="material-symbols-outlined main-icon">lock</span>
+        </div>
+        <h2>File Encryptor</h2>
+        <p class="m3-subtitle">Military-grade AES-256-GCM encryption. Runs completely in your browser.</p>
+    </div>
+
+    <div class="m3-file-area">
+        <input type="file" id="fileInput" class="hidden-file-input">
+        <label for="fileInput" class="file-drop-zone">
+            <span class="material-symbols-outlined upload-icon">upload_file</span>
+            <span id="file-name-display" class="file-name">Click to browse or drag file here</span>
+        </label>
+    </div>
+
+    <div class="m3-text-field">
+        <label for="password">Encryption Passphrase</label>
+        <div class="input-with-icon">
+            <span class="material-symbols-outlined input-icon">key</span>
+            <input type="password" id="password" placeholder="Enter a strong passphrase">
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button id="btn-encrypt" class="m3-btn m3-btn-primary">
+            <span class="material-symbols-outlined btn-icon">enhanced_encryption</span> Encrypt
+        </button>
+        <button id="btn-decrypt" class="m3-btn m3-btn-tonal">
+            <span class="material-symbols-outlined btn-icon">lock_open</span> Decrypt
+        </button>
+    </div>
+    
+    <div id="status" class="m3-status">
+        <span class="material-symbols-outlined status-icon" style="display:none;">info</span>
+        <span id="status-text"></span>
+    </div>
+</main>
+
+<footer class="m3-footer">
+    <p>Version 1.0.0</p>
+    <p>Created by <a href="http://www.waliulawaltaha.com" target="_blank" rel="noopener noreferrer">Waliul Awal Taha</a></p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
