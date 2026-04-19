@@ -303,3 +303,27 @@ button:disabled {
 .copy-btn:active {
     transform: scale(0.9);
 }
+
+
+.file-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 5;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+.btn-small .material-symbols-outlined {
+    font-size: 1.1rem;
+}
+
+/* Ensure the drop zone label itself doesn't trigger the file input anymore, 
+   since we have dedicated buttons inside it now. */
+.file-drop-zone {
+    cursor: default;
+}

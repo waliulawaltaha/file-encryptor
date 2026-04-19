@@ -25,6 +25,7 @@ themeToggle.addEventListener('click', () => {
 
 // --- DOM Elements ---
 const fileInput = document.getElementById('fileInput');
+const folderInput = document.getElementById('folderInput');
 const fileNameDisplay = document.getElementById('file-name-display');
 const passwordInput = document.getElementById('password');
 const strengthBar = document.getElementById('strength-bar');
@@ -36,6 +37,8 @@ const btnEncrypt = document.getElementById('btn-encrypt');
 const btnDecrypt = document.getElementById('btn-decrypt');
 const btnCopy = document.getElementById('btn-copy');
 
+let selectedFiles = [];
+let isFolderMode = false;
 let lastOutputFilename = "";
 
 // --- Password Strength Logic ---
@@ -81,21 +84,28 @@ passwordInput.addEventListener('input', () => {
     strengthText.style.color = textColor;
 });
 
-// --- File Selection UI Update ---
-fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        fileNameDisplay.textContent = file.name;
-        fileNameDisplay.style.color = "var(--md-sys-color-primary)";
-        fileNameDisplay.style.fontWeight = "700";
-    } else {
-        fileNameDisplay.textContent = "Click to browse or drag file here";
-        fileNameDisplay.style.color = "var(--md-sys-color-on-surface-variant)";
-        fileNameDisplay.style.fontWeight = "500";
-    }
-    // Hide copy button if a new file is picked
+// --- File & Folder Selection UI Update ---
+function handleSelection(files, isFolder) {
+    selectedFiles = Array.from(files);
+    isFolderMode = isFolder;
     btnCopy.style.display = 'none'; 
-});
+
+    if (selectedFiles.length === 1 && !isFolder) {
+        fileNameDisplay.textContent = selectedFiles[0].name;
+    } else if (selectedFiles.length > 0) {
+        // Extract the root folder name from the relative path
+        const folderName = selectedFiles[0].webkitRelativePath.split('/')[0];
+        fileNameDisplay.textContent = `📁 ${folderName} (${selectedFiles.length} files)`;
+    } else {
+        fileNameDisplay.textContent = "Select data to encrypt or decrypt";
+    }
+    
+    fileNameDisplay.style.color = selectedFiles.length > 0 ? "var(--md-sys-color-primary)" : "var(--md-sys-color-on-surface-variant)";
+    fileNameDisplay.style.fontWeight = selectedFiles.length > 0 ? "700" : "500";
+}
+
+fileInput.addEventListener('change', (e) => handleSelection(e.target.files, false));
+folderInput.addEventListener('change', (e) => handleSelection(e.target.files, true));
 
 // --- Copy to Clipboard Logic ---
 btnCopy.addEventListener('click', async () => {
@@ -115,44 +125,76 @@ btnCopy.addEventListener('click', async () => {
 });
 
 // --- Event Listeners ---
-btnEncrypt.addEventListener('click', () => processFile('encrypt'));
-btnDecrypt.addEventListener('click', () => processFile('decrypt'));
+btnEncrypt.addEventListener('click', () => processData('encrypt'));
+btnDecrypt.addEventListener('click', () => processData('decrypt'));
 
-// --- Main Logic ---
-async function processFile(action) {
-    const file = fileInput.files[0];
+// --- Core Logic with JSZip integration ---
+async function processData(action) {
     const password = passwordInput.value;
 
-    if (!file || !password) {
-        updateStatus("Please select a file and enter a password.", "#BA1A1A", "error", "#FFDAD6");
+    if (selectedFiles.length === 0 || !password) {
+        updateStatus("Please select a file/folder and enter a passphrase.", "#BA1A1A", "error", "#FFDAD6");
         return;
     }
 
     try {
-        // UI Loading State
         setLoadingState(true);
         btnCopy.style.display = 'none'; 
-
-        const fileData = await file.arrayBuffer();
+        
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const infoColor = isDark ? "#D0BCFF" : "#6750A4"; 
         const infoBg = isDark ? "rgba(208, 188, 255, 0.1)" : "rgba(103, 80, 164, 0.1)";
 
-        updateStatus(action === 'encrypt' ? "Encrypting (this may take a moment)..." : "Decrypting...", infoColor, "sync", infoBg, true);
-
-        // Small delay to allow the UI to update before locking the main thread with heavy math
-        await new Promise(resolve => setTimeout(resolve, 100));
+        let dataToProcess;
+        let outputFilename;
 
         if (action === 'encrypt') {
-            const encryptedData = await encryptData(fileData, password);
-            lastOutputFilename = file.name + ".encrypted";
-            downloadFile(encryptedData, lastOutputFilename);
+            if (isFolderMode || selectedFiles.length > 1) {
+                // 1. Zipping process
+                updateStatus("Packaging folder into ZIP...", infoColor, "folder_zip", infoBg, true);
+                // Tiny delay to allow UI to render the spinning icon
+                await new Promise(r => setTimeout(r, 100)); 
+                
+                const zip = new JSZip();
+                selectedFiles.forEach(f => {
+                    const filePath = f.webkitRelativePath || f.name;
+                    zip.file(filePath, f);
+                });
+                
+                dataToProcess = await zip.generateAsync({ type: "arraybuffer" });
+                const baseFolderName = selectedFiles[0].webkitRelativePath.split('/')[0] || "archive";
+                outputFilename = baseFolderName + ".zip.encrypted";
+            } else {
+                // Standard single file process
+                dataToProcess = await selectedFiles[0].arrayBuffer();
+                outputFilename = selectedFiles[0].name + ".encrypted";
+            }
+
+            // 2. Encryption process
+            updateStatus("Encrypting (this may take a moment)...", infoColor, "sync", infoBg, true);
+            await new Promise(r => setTimeout(r, 100)); 
+            
+            const encryptedData = await encryptData(dataToProcess, password);
+            lastOutputFilename = outputFilename;
+            downloadFile(encryptedData, outputFilename);
             updateStatus("Encryption successful!", "#146C2E", "check_circle", "#C4EED0");
 
         } else if (action === 'decrypt') {
-            const decryptedData = await decryptData(fileData, password);
-            lastOutputFilename = file.name.endsWith('.encrypted') ? file.name.slice(0, -10) : "decrypted_" + file.name;
-            downloadFile(new Uint8Array(decryptedData), lastOutputFilename);
+            if (isFolderMode || selectedFiles.length > 1) {
+                throw new Error("You can only decrypt one archive at a time.");
+            }
+
+            updateStatus("Decrypting...", infoColor, "sync", infoBg, true);
+            await new Promise(r => setTimeout(r, 100));
+            
+            dataToProcess = await selectedFiles[0].arrayBuffer();
+            const decryptedData = await decryptData(dataToProcess, password);
+            
+            // Reconstruct the original filename
+            outputFilename = selectedFiles[0].name.endsWith('.encrypted') ? selectedFiles[0].name.slice(0, -10) : "decrypted_" + selectedFiles[0].name;
+            lastOutputFilename = outputFilename;
+            
+            downloadFile(new Uint8Array(decryptedData), outputFilename);
             updateStatus("Decryption successful!", "#146C2E", "check_circle", "#C4EED0");
         }
         
@@ -161,9 +203,9 @@ async function processFile(action) {
 
     } catch (error) {
         console.error(error);
-        updateStatus("Error: Incorrect password or corrupted file.", "#BA1A1A", "error", "#FFDAD6");
+        const msg = error.message.includes("decrypt one archive") ? error.message : "Error: Incorrect password or corrupted file.";
+        updateStatus(msg, "#BA1A1A", "error", "#FFDAD6");
     } finally {
-        // Remove Loading State
         setLoadingState(false);
     }
 }
@@ -174,8 +216,9 @@ function setLoadingState(isLoading) {
     btnDecrypt.disabled = isLoading;
     passwordInput.disabled = isLoading;
     fileInput.disabled = isLoading;
-    document.getElementById('drop-zone').style.pointerEvents = isLoading ? 'none' : 'auto';
+    folderInput.disabled = isLoading;
     document.getElementById('drop-zone').style.opacity = isLoading ? '0.6' : '1';
+    document.getElementById('drop-zone').style.pointerEvents = isLoading ? 'none' : 'auto';
 }
 
 function updateStatus(message, color, iconName, bgColor, spin = false) {
