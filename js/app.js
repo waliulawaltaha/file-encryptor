@@ -26,9 +26,9 @@ themeToggle.addEventListener('click', () => {
 // --- DOM Elements ---
 const fileInput = document.getElementById('fileInput');
 const folderInput = document.getElementById('folderInput');
-const fileNameDisplay = document.getElementById('file-name-display');
 const btnSelectFile = document.getElementById('btn-select-file');
 const btnSelectFolder = document.getElementById('btn-select-folder');
+const fileNameDisplay = document.getElementById('file-name-display');
 
 const passwordInput = document.getElementById('password');
 const strengthBar = document.getElementById('strength-bar');
@@ -41,19 +41,21 @@ const btnEncrypt = document.getElementById('btn-encrypt');
 const btnDecrypt = document.getElementById('btn-decrypt');
 const btnCopy = document.getElementById('btn-copy');
 
+const loadingOverlay = document.getElementById('loading-overlay');
+const loadingText = document.getElementById('loading-text');
+
 let selectedFiles = [];
 let isFolderMode = false;
 let lastOutputFilename = "";
 
-// --- Button Listeners for File/Folder Picker ---
+// --- Button Listeners ---
 btnSelectFile.addEventListener('click', () => fileInput.click());
 btnSelectFolder.addEventListener('click', () => folderInput.click());
 
-// --- Password Strength Logic ---
+// --- Password Strength ---
 passwordInput.addEventListener('input', () => {
     const val = passwordInput.value;
     let strength = 0;
-    
     if (val.length > 0) strength += 1;
     if (val.length >= 8) strength += 1;
     if (val.length >= 12) strength += 1;
@@ -62,16 +64,10 @@ passwordInput.addEventListener('input', () => {
     if (/[^A-Za-z0-9]/.test(val)) strength += 1;
 
     let width = "0%", color = "transparent", text = "", textColor = "var(--md-sys-color-on-surface-variant)";
-
-    if (val.length === 0) {
-        width = "0%"; text = "";
-    } else if (strength <= 2) {
-        width = "33%"; color = "#BA1A1A"; text = "Weak"; textColor = "#BA1A1A";
-    } else if (strength <= 4) {
-        width = "66%"; color = "#D9B200"; text = "Moderate"; textColor = "#D9B200";
-    } else {
-        width = "100%"; color = "#146C2E"; text = "Strong"; textColor = "#146C2E";
-    }
+    if (val.length === 0) { width = "0%"; text = ""; } 
+    else if (strength <= 2) { width = "33%"; color = "#BA1A1A"; text = "Weak"; textColor = "#BA1A1A"; } 
+    else if (strength <= 4) { width = "66%"; color = "#D9B200"; text = "Moderate"; textColor = "#D9B200"; } 
+    else { width = "100%"; color = "#146C2E"; text = "Strong"; textColor = "#146C2E"; }
 
     strengthBar.style.width = width;
     strengthBar.style.backgroundColor = color;
@@ -79,8 +75,10 @@ passwordInput.addEventListener('input', () => {
     strengthText.style.color = textColor;
 });
 
-// --- File & Folder Selection UI Update ---
+// --- File Selection Handler ---
 function handleSelection(files, isFolder) {
+    if (!files || files.length === 0) return;
+    
     selectedFiles = Array.from(files);
     isFolderMode = isFolder;
     btnCopy.style.display = 'none'; 
@@ -88,20 +86,18 @@ function handleSelection(files, isFolder) {
     if (selectedFiles.length === 1 && !isFolder) {
         fileNameDisplay.textContent = selectedFiles[0].name;
     } else if (selectedFiles.length > 0) {
-        const folderName = selectedFiles[0].webkitRelativePath.split('/')[0];
-        fileNameDisplay.textContent = `📁 ${folderName} (${selectedFiles.length} files)`;
-    } else {
-        fileNameDisplay.textContent = "No data selected";
+        const folderName = selectedFiles[0].webkitRelativePath.split('/')[0] || "Multiple Files";
+        fileNameDisplay.textContent = `📁 ${folderName} (${selectedFiles.length} items)`;
     }
     
-    fileNameDisplay.style.color = selectedFiles.length > 0 ? "var(--md-sys-color-primary)" : "var(--md-sys-color-on-surface-variant)";
-    fileNameDisplay.style.fontWeight = selectedFiles.length > 0 ? "700" : "500";
+    fileNameDisplay.style.color = "var(--md-sys-color-primary)";
+    fileNameDisplay.style.fontWeight = "700";
 }
 
 fileInput.addEventListener('change', (e) => handleSelection(e.target.files, false));
 folderInput.addEventListener('change', (e) => handleSelection(e.target.files, true));
 
-// --- Copy to Clipboard Logic ---
+// --- Copy to Clipboard ---
 btnCopy.addEventListener('click', async () => {
     if (!lastOutputFilename) return;
     try {
@@ -112,7 +108,7 @@ btnCopy.addEventListener('click', async () => {
     } catch (err) { console.error('Failed to copy!', err); }
 });
 
-// --- Main Encryption/Decryption ---
+// --- Encryption/Decryption Process ---
 btnEncrypt.addEventListener('click', () => processData('encrypt'));
 btnDecrypt.addEventListener('click', () => processData('decrypt'));
 
@@ -120,27 +116,22 @@ async function processData(action) {
     const password = passwordInput.value;
 
     if (selectedFiles.length === 0 || !password) {
-        updateStatus("Please select a file/folder and enter a passphrase.", "#BA1A1A", "error", "#FFDAD6");
+        updateStatus("Please select data and enter a passphrase.", "#BA1A1A", "error", "#FFDAD6");
         return;
     }
 
     try {
-        setLoadingState(true);
+        setLoadingState(true, action === 'encrypt' ? "Preparing..." : "Decrypting...");
         btnCopy.style.display = 'none'; 
-        
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const infoColor = isDark ? "#D0BCFF" : "#6750A4"; 
-        const infoBg = isDark ? "rgba(208, 188, 255, 0.1)" : "rgba(103, 80, 164, 0.1)";
 
         let dataToProcess;
         let outputFilename;
 
         if (action === 'encrypt') {
             if (isFolderMode || selectedFiles.length > 1) {
-                updateStatus("Packaging folder into ZIP...", infoColor, "folder_zip", infoBg, true);
+                loadingText.textContent = "Packaging into ZIP...";
                 await new Promise(r => setTimeout(r, 100)); 
                 
-                // Safely load JSZip from the window object
                 const zip = new window.JSZip();
                 selectedFiles.forEach(f => {
                     const filePath = f.webkitRelativePath || f.name;
@@ -148,14 +139,14 @@ async function processData(action) {
                 });
                 
                 dataToProcess = await zip.generateAsync({ type: "arraybuffer" });
-                const baseFolderName = selectedFiles[0].webkitRelativePath.split('/')[0] || "archive";
+                const baseFolderName = selectedFiles[0].webkitRelativePath ? selectedFiles[0].webkitRelativePath.split('/')[0] : "archive";
                 outputFilename = baseFolderName + ".zip.encrypted";
             } else {
                 dataToProcess = await selectedFiles[0].arrayBuffer();
                 outputFilename = selectedFiles[0].name + ".encrypted";
             }
 
-            updateStatus("Encrypting (this may take a moment)...", infoColor, "sync", infoBg, true);
+            loadingText.textContent = "Encrypting data...";
             await new Promise(r => setTimeout(r, 100)); 
             
             const encryptedData = await encryptData(dataToProcess, password);
@@ -168,7 +159,7 @@ async function processData(action) {
                 throw new Error("You can only decrypt one archive at a time.");
             }
 
-            updateStatus("Decrypting...", infoColor, "sync", infoBg, true);
+            loadingText.textContent = "Decrypting data...";
             await new Promise(r => setTimeout(r, 100));
             
             dataToProcess = await selectedFiles[0].arrayBuffer();
@@ -185,7 +176,7 @@ async function processData(action) {
 
     } catch (error) {
         console.error(error);
-        const msg = error.message && error.message.includes("decrypt one archive") ? error.message : "Error: Incorrect password or corrupted file.";
+        const msg = error.message.includes("decrypt one archive") ? error.message : "Error: Incorrect password or corrupted file.";
         updateStatus(msg, "#BA1A1A", "error", "#FFDAD6");
     } finally {
         setLoadingState(false);
@@ -193,26 +184,32 @@ async function processData(action) {
 }
 
 // --- Utilities ---
-function setLoadingState(isLoading) {
+function setLoadingState(isLoading, text = "") {
+    if (isLoading) {
+        loadingOverlay.classList.add('active');
+        loadingText.textContent = text;
+    } else {
+        loadingOverlay.classList.remove('active');
+    }
+    
+    // Fallback locks for inputs underneath the blur
     btnEncrypt.disabled = isLoading;
     btnDecrypt.disabled = isLoading;
     btnSelectFile.disabled = isLoading;
     btnSelectFolder.disabled = isLoading;
     passwordInput.disabled = isLoading;
-    document.getElementById('drop-zone').style.opacity = isLoading ? '0.6' : '1';
 }
 
-function updateStatus(message, color, iconName, bgColor, spin = false) {
+function updateStatus(message, color, iconName, bgColor) {
     statusText.textContent = message;
     statusDiv.style.color = color;
     statusDiv.style.backgroundColor = bgColor;
     statusIcon.style.display = 'inline-block';
     statusIcon.textContent = iconName;
-    if (spin) {
-        statusIcon.classList.add('spin-animation');
-    } else {
-        statusIcon.classList.remove('spin-animation');
-    }
+    
+    statusDiv.classList.remove('fade-in-up');
+    void statusDiv.offsetWidth; 
+    statusDiv.classList.add('fade-in-up');
 }
 
 function downloadFile(data, filename) {

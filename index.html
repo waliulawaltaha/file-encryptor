@@ -14,7 +14,12 @@
 </head>
 <body>
 
-<main class="m3-card">
+<main class="m3-card fade-in-up">
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="m3-spinner"></div>
+        <h3 id="loading-text" class="loading-text">Processing...</h3>
+    </div>
+
     <div class="card-top-bar">
         <button type="button" id="theme-toggle" class="m3-icon-btn" aria-label="Toggle Dark Mode">
             <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
@@ -22,29 +27,29 @@
     </div>
 
     <div class="m3-card-header">
-        <div class="icon-container">
-            <span class="material-symbols-outlined main-icon">lock</span>
+        <div class="icon-container pulse-animation">
+            <span class="material-symbols-outlined main-icon">enhanced_encryption</span>
         </div>
         <h2>File Encryptor</h2>
         <p class="m3-subtitle">Military-grade AES-256-GCM encryption. Runs completely in your browser.</p>
     </div>
 
     <div class="m3-file-area">
-        <input type="file" id="fileInput" class="hidden-file-input">
+        <input type="file" id="fileInput" class="hidden-file-input" multiple>
         <input type="file" id="folderInput" class="hidden-file-input" webkitdirectory directory multiple>
         
-        <div class="file-display-zone" id="drop-zone">
-            <span class="material-symbols-outlined upload-icon">folder_data</span>
-            <span id="file-name-display" class="file-name">No data selected</span>
-        </div>
-
-        <div class="selection-buttons">
-            <button type="button" id="btn-select-file" class="m3-btn m3-btn-tonal btn-small">
-                <span class="material-symbols-outlined btn-icon">draft</span> Select File
-            </button>
-            <button type="button" id="btn-select-folder" class="m3-btn m3-btn-tonal btn-small">
-                <span class="material-symbols-outlined btn-icon">folder_zip</span> Select Folder
-            </button>
+        <div class="file-drop-zone hover-lift" id="drop-zone">
+            <span class="material-symbols-outlined upload-icon float-animation">cloud_upload</span>
+            <span id="file-name-display" class="file-name">Select data to encrypt or decrypt</span>
+            
+            <div class="file-actions">
+                <button type="button" id="btn-select-file" class="m3-btn m3-btn-tonal btn-small pop-on-hover">
+                    <span class="material-symbols-outlined">draft</span> File
+                </button>
+                <button type="button" id="btn-select-folder" class="m3-btn m3-btn-tonal btn-small pop-on-hover">
+                    <span class="material-symbols-outlined">folder_zip</span> Folder
+                </button>
+            </div>
         </div>
     </div>
 
@@ -59,10 +64,10 @@
     </div>
 
     <div class="button-group">
-        <button type="button" id="btn-encrypt" class="m3-btn m3-btn-primary">
+        <button type="button" id="btn-encrypt" class="m3-btn m3-btn-primary pop-on-hover">
             <span class="material-symbols-outlined btn-icon">enhanced_encryption</span> Encrypt
         </button>
-        <button type="button" id="btn-decrypt" class="m3-btn m3-btn-tonal">
+        <button type="button" id="btn-decrypt" class="m3-btn m3-btn-tonal pop-on-hover">
             <span class="material-symbols-outlined btn-icon">lock_open</span> Decrypt
         </button>
     </div>
@@ -72,7 +77,7 @@
             <span class="material-symbols-outlined status-icon" style="display:none;">info</span>
             <span id="status-text"></span>
         </div>
-        <button type="button" id="btn-copy" class="m3-icon-btn copy-btn" style="display:none;" title="Copy Output Filename">
+        <button type="button" id="btn-copy" class="m3-icon-btn copy-btn pop-on-hover" style="display:none;" title="Copy Output Filename">
             <span class="material-symbols-outlined">content_copy</span>
         </button>
     </div>
