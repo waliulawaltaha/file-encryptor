@@ -160,6 +160,11 @@ async function processEncryption() {
         return;
     }
 
+    if (password.length < 8) {
+        updateStatus("Passphrase must be at least 8 characters long.", "#BA1A1A", "error", "#FFDAD6");
+        return;
+    }
+
     try {
         setLoadingState(true, "Preparing...");
         btnCopy.style.display = 'none';
