@@ -149,10 +149,10 @@ btnCopy.addEventListener('click', async () => {
 });
 
 // --- Encryption/Decryption Process ---
-btnEncrypt.addEventListener('click', () => processData('encrypt'));
-btnDecrypt.addEventListener('click', () => processData('decrypt'));
+btnEncrypt.addEventListener('click', processEncryption);
+btnDecrypt.addEventListener('click', processDecryption);
 
-async function processData(action) {
+async function processEncryption() {
     const password = passwordInput.value;
 
     if (selectedFiles.length === 0 || !password) {
@@ -161,57 +161,76 @@ async function processData(action) {
     }
 
     try {
-        setLoadingState(true, action === 'encrypt' ? "Preparing..." : "Decrypting...");
-        btnCopy.style.display = 'none'; 
+        setLoadingState(true, "Preparing...");
+        btnCopy.style.display = 'none';
 
         let dataToProcess;
         let outputFilename;
 
-        if (action === 'encrypt') {
-            if (isFolderMode || selectedFiles.length > 1) {
-                loadingText.textContent = "Packaging into ZIP...";
-                await new Promise(r => setTimeout(r, 100)); 
-                
-                const zip = new window.JSZip();
-                selectedFiles.forEach(f => {
-                    const filePath = f.webkitRelativePath || f.name;
-                    zip.file(filePath, f);
-                });
-                
-                dataToProcess = await zip.generateAsync({ type: "arraybuffer" });
-                const baseFolderName = selectedFiles[0].webkitRelativePath ? selectedFiles[0].webkitRelativePath.split('/')[0] : "archive";
-                outputFilename = baseFolderName + ".zip.encrypted";
-            } else {
-                dataToProcess = await selectedFiles[0].arrayBuffer();
-                outputFilename = selectedFiles[0].name + ".encrypted";
-            }
-
-            loadingText.textContent = "Encrypting data...";
-            await new Promise(r => setTimeout(r, 100)); 
-            
-            const encryptedData = await encryptData(dataToProcess, password);
-            lastOutputFilename = outputFilename;
-            downloadFile(encryptedData, outputFilename);
-            updateStatus("Encryption successful!", "#146C2E", "check_circle", "#C4EED0");
-
-        } else if (action === 'decrypt') {
-            if (isFolderMode || selectedFiles.length > 1) {
-                throw new Error("You can only decrypt one archive at a time.");
-            }
-
-            loadingText.textContent = "Decrypting data...";
+        if (isFolderMode || selectedFiles.length > 1) {
+            loadingText.textContent = "Packaging into ZIP...";
             await new Promise(r => setTimeout(r, 100));
-            
+
+            const zip = new window.JSZip();
+            selectedFiles.forEach(f => {
+                const filePath = f.webkitRelativePath || f.name;
+                zip.file(filePath, f);
+            });
+
+            dataToProcess = await zip.generateAsync({ type: "arraybuffer" });
+            const baseFolderName = selectedFiles[0].webkitRelativePath ? selectedFiles[0].webkitRelativePath.split('/')[0] : "archive";
+            outputFilename = baseFolderName + ".zip.encrypted";
+        } else {
             dataToProcess = await selectedFiles[0].arrayBuffer();
-            const decryptedData = await decryptData(dataToProcess, password);
-            
-            outputFilename = selectedFiles[0].name.endsWith('.encrypted') ? selectedFiles[0].name.slice(0, -10) : "decrypted_" + selectedFiles[0].name;
-            lastOutputFilename = outputFilename;
-            
-            downloadFile(new Uint8Array(decryptedData), outputFilename);
-            updateStatus("Decryption successful!", "#146C2E", "check_circle", "#C4EED0");
+            outputFilename = selectedFiles[0].name + ".encrypted";
         }
-        
+
+        loadingText.textContent = "Encrypting data...";
+        await new Promise(r => setTimeout(r, 100));
+
+        const encryptedData = await encryptData(dataToProcess, password);
+        lastOutputFilename = outputFilename;
+        downloadFile(encryptedData, outputFilename);
+        updateStatus("Encryption successful!", "#146C2E", "check_circle", "#C4EED0");
+
+        btnCopy.style.display = 'block';
+
+    } catch (error) {
+        console.error(error);
+        updateStatus("Error: Could not encrypt data.", "#BA1A1A", "error", "#FFDAD6");
+    } finally {
+        setLoadingState(false);
+    }
+}
+
+async function processDecryption() {
+    const password = passwordInput.value;
+
+    if (selectedFiles.length === 0 || !password) {
+        updateStatus("Please select data and enter a passphrase.", "#BA1A1A", "error", "#FFDAD6");
+        return;
+    }
+
+    try {
+        setLoadingState(true, "Decrypting...");
+        btnCopy.style.display = 'none';
+
+        if (isFolderMode || selectedFiles.length > 1) {
+            throw new Error("You can only decrypt one archive at a time.");
+        }
+
+        loadingText.textContent = "Decrypting data...";
+        await new Promise(r => setTimeout(r, 100));
+
+        const dataToProcess = await selectedFiles[0].arrayBuffer();
+        const decryptedData = await decryptData(dataToProcess, password);
+
+        const outputFilename = selectedFiles[0].name.endsWith('.encrypted') ? selectedFiles[0].name.slice(0, -10) : "decrypted_" + selectedFiles[0].name;
+        lastOutputFilename = outputFilename;
+
+        downloadFile(new Uint8Array(decryptedData), outputFilename);
+        updateStatus("Decryption successful!", "#146C2E", "check_circle", "#C4EED0");
+
         btnCopy.style.display = 'block';
 
     } catch (error) {
