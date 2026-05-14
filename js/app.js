@@ -169,7 +169,7 @@ async function processEncryption() {
 
         if (isFolderMode || selectedFiles.length > 1) {
             loadingText.textContent = "Packaging into ZIP...";
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
             const zip = new window.JSZip();
             selectedFiles.forEach(f => {
@@ -186,7 +186,7 @@ async function processEncryption() {
         }
 
         loadingText.textContent = "Encrypting data...";
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
         const encryptedData = await encryptData(dataToProcess, password);
         lastOutputFilename = outputFilename;
@@ -220,7 +220,7 @@ async function processDecryption() {
         }
 
         loadingText.textContent = "Decrypting data...";
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
         const dataToProcess = await selectedFiles[0].arrayBuffer();
         const decryptedData = await decryptData(dataToProcess, password);
