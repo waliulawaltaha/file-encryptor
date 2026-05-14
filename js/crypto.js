@@ -39,9 +39,9 @@ export async function encryptData(fileData, password) {
 export async function decryptData(encryptedBuffer, password) {
     const dataArray = new Uint8Array(encryptedBuffer);
     
-    const salt = dataArray.slice(0, 16);
-    const iv = dataArray.slice(16, 28);
-    const encryptedContent = dataArray.slice(28);
+    const salt = dataArray.subarray(0, 16);
+    const iv = dataArray.subarray(16, 28);
+    const encryptedContent = dataArray.subarray(28);
 
     const key = await deriveKey(password, salt);
     
