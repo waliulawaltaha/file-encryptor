@@ -169,7 +169,7 @@ async function processEncryption() {
 
         if (isFolderMode || selectedFiles.length > 1) {
             loadingText.textContent = "Packaging into ZIP...";
-            await new Promise(r => setTimeout(r, 100));
+            await yieldToUI();
 
             const zip = new window.JSZip();
             selectedFiles.forEach(f => {
@@ -186,7 +186,7 @@ async function processEncryption() {
         }
 
         loadingText.textContent = "Encrypting data...";
-        await new Promise(r => setTimeout(r, 100));
+        await yieldToUI();
 
         const encryptedData = await encryptData(dataToProcess, password);
         lastOutputFilename = outputFilename;
@@ -220,7 +220,7 @@ async function processDecryption() {
         }
 
         loadingText.textContent = "Decrypting data...";
-        await new Promise(r => setTimeout(r, 100));
+        await yieldToUI();
 
         const dataToProcess = await selectedFiles[0].arrayBuffer();
         const decryptedData = await decryptData(dataToProcess, password);
@@ -243,6 +243,8 @@ async function processDecryption() {
 }
 
 // --- Utilities ---
+const yieldToUI = (ms = 100) => new Promise(r => setTimeout(r, ms));
+
 function setLoadingState(isLoading, text = "") {
     if (isLoading) {
         loadingOverlay.classList.add('active');
