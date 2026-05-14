@@ -60,6 +60,7 @@ passwordInput.addEventListener('input', () => {
     if (val.length >= 8) strength += 1;
     if (val.length >= 12) strength += 1;
     if (/[A-Z]/.test(val)) strength += 1;
+    if (/[a-z]/.test(val)) strength += 1;
     if (/[0-9]/.test(val)) strength += 1;
     if (/[^A-Za-z0-9]/.test(val)) strength += 1;
 
@@ -82,6 +83,9 @@ function handleSelection(files, isFolder) {
     selectedFiles = Array.from(files);
     isFolderMode = isFolder;
     btnCopy.style.display = 'none'; 
+    statusDiv.style.backgroundColor = 'transparent';
+    statusText.textContent = '';
+    statusIcon.style.display = 'none';
 
     if (selectedFiles.length === 1 && !isFolder) {
         fileNameDisplay.textContent = selectedFiles[0].name;
@@ -198,7 +202,7 @@ async function processEncryption() {
         downloadFile(encryptedData, outputFilename);
         updateStatus("Encryption successful!", "#146C2E", "check_circle", "#C4EED0");
 
-        btnCopy.style.display = 'block';
+        btnCopy.style.display = 'inline-flex';
 
     } catch (error) {
         console.error(error);
@@ -236,7 +240,7 @@ async function processDecryption() {
         downloadFile(new Uint8Array(decryptedData), outputFilename);
         updateStatus("Decryption successful!", "#146C2E", "check_circle", "#C4EED0");
 
-        btnCopy.style.display = 'block';
+        btnCopy.style.display = 'inline-flex';
 
     } catch (error) {
         console.error(error);
@@ -285,5 +289,5 @@ function downloadFile(data, filename) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => { URL.revokeObjectURL(url); }, 1000);
 }
