@@ -179,3 +179,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 .m3-footer p { margin: 0.25rem 0; }
 .m3-footer a { color: var(--md-sys-color-primary); text-decoration: none; font-weight: 500; }
 .m3-footer a:hover { text-decoration: underline; }
+
+.file-drop-zone.dragover {
+    border-color: var(--md-sys-color-primary);
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+}
