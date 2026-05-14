@@ -86,7 +86,7 @@ function handleSelection(files, isFolder) {
     if (selectedFiles.length === 1 && !isFolder) {
         fileNameDisplay.textContent = selectedFiles[0].name;
     } else if (selectedFiles.length > 0) {
-        const folderName = selectedFiles[0].webkitRelativePath.split('/')[0] || "Multiple Files";
+        const folderName = (selectedFiles[0].webkitRelativePath || "").split('/')[0] || "Multiple Files";
         fileNameDisplay.textContent = `📁 ${folderName} (${selectedFiles.length} items)`;
     }
     
@@ -96,6 +96,46 @@ function handleSelection(files, isFolder) {
 
 fileInput.addEventListener('change', (e) => handleSelection(e.target.files, false));
 folderInput.addEventListener('change', (e) => handleSelection(e.target.files, true));
+
+
+// --- Drag and Drop ---
+const dropZone = document.getElementById('drop-zone');
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, unhighlight, false);
+});
+
+function highlight(e) {
+    dropZone.classList.add('dragover');
+}
+
+function unhighlight(e) {
+    dropZone.classList.remove('dragover');
+}
+
+dropZone.addEventListener('drop', handleDrop, false);
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    // Simplistic handling, treats multiple files as false for isFolder
+    handleSelection(files, false);
+}
+
 
 // --- Copy to Clipboard ---
 btnCopy.addEventListener('click', async () => {
