@@ -6,7 +6,16 @@ if (typeof window === 'undefined') {
     global.window = {};
 }
 if (!window.crypto) {
-    window.crypto = webcrypto;
+    Object.defineProperty(window, 'crypto', {
+        value: webcrypto,
+        writable: true
+    });
+}
+if (typeof global.TextEncoder === 'undefined') {
+    global.TextEncoder = require('util').TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+    global.TextDecoder = require('util').TextDecoder;
 }
 
 describe('Crypto module', () => {
